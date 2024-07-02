@@ -1,0 +1,76 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        // Add repository for gradle-versions-plugin
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.39.0'
+        classpath 'org.aspectj:aspectjtools:1.9.4'
+    }
+}
+
+plugins {
+    id 'java'
+    id 'com.github.ben-manes.versions' version '0.39.0'  // Apply gradle-versions-plugin directly as a plugin
+}
+
+group 'org.qrencia'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Dependencies
+    implementation 'io.rest-assured:rest-assured:4.4.0'
+    implementation 'org.testng:testng:7.5.1'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.4.2'
+    implementation 'io.rest-assured:json-schema-validator:4.4.0'
+    implementation 'org.projectlombok:lombok:1.18.20'
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
+    implementation 'com.github.javafaker:javafaker:1.0.2'
+    implementation 'com.aventstack:extentreports:5.0.9'
+    implementation 'com.sun.mail:javax.mail:1.6.2'
+    implementation 'org.jsoup:jsoup:1.16.1'
+    implementation 'org.json:json:20240303'
+    implementation 'org.apache.logging.log4j:log4j-api:2.23.1'
+    implementation 'org.apache.logging.log4j:log4j-core:2.23.1'
+    implementation 'org.slf4j:slf4j-api:2.1.0-alpha1'
+    testImplementation 'org.slf4j:slf4j-simple:2.1.0-alpha1'
+    implementation 'org.apache.poi:poi:5.2.5'
+    implementation 'org.apache.poi:poi-ooxml:5.2.5'
+    implementation group: 'io.qameta.allure', name: 'allure-testng', version: '2.14.0'
+
+    // Test dependencies
+    testImplementation 'org.testng:testng:7.5.1'
+}
+
+// Maven Surefire Plugin configuration
+tasks.withType(Test) {
+    useTestNG()
+    maxParallelForks = 10
+}
+
+dependencies {
+    testImplementation 'org.aspectj:aspectjweaver:1.9.4'
+}
+
+// AspectJ configuration
+configurations {
+    aspectjWeaver
+}
+
+dependencies {
+    aspectjWeaver "org.aspectj:aspectjweaver:1.9.4"
+}
+
+// Additional configuration for test suite files and AspectJ agent
+tasks.test {
+    systemProperty 'suiteFile', 'testng_Local'
+    jvmArgs "-javaagent:${configurations.aspectjWeaver.singleFile}"
+}
